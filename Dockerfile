@@ -16,11 +16,11 @@ WORKDIR /var/www/html
 COPY . .
 RUN composer install --no-dev --optimize-autoloader
 
-# 6) (Opcional) Genera la APP_KEY si quieres automatizarlo aquí
-# RUN php artisan key:generate --ansi
+# 6) Genera la APP_KEY
+RUN php artisan key:generate --ansi
+
 # Expón el puerto que Render te asigna (lleva en la variable $PORT)
-EXPOSE $PORT
+EXPOSE 8000
 
 # Al arrancar, usa artisan serve en el puerto que Render exporta
-CMD php artisan serve --host=0.0.0.0 --port=$PORT
-
+CMD php artisan migrate --force && php artisan serve --host=0.0.0.0 --port=8000
