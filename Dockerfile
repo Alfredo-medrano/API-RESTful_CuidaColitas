@@ -1,30 +1,26 @@
-# Usa una imagen oficial de PHP con extensiones necesarias
-FROM php:8.1-fpm-slim
+# 1. Usa la imagen oficial de PHP-FPM
+FROM php:8.1-fpm
 
-# Instala dependencias de sistema
-RUN apt-get update && apt-get install -y \
-    git zip unzip libpq-dev \
-    && apt-get upgrade -y \
-    && apt-get clean && rm -rf /var/lib/apt/lists/*
+# 2. Instala dependencias de sistema y extensiones para Postgres
+RUN apt-get update \
+ && apt-get install -y git zip unzip libpq-dev \
+ && docker-php-ext-install pdo pdo_pgsql
 
-# Instala extensiones de PHP para Postgres y JWT
-RUN docker-php-ext-install pdo pdo_pgsql
-
-# Instala Composer
+# 3. Instala Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Crea directorio de la aplicación
+# 4. Define el directorio de trabajo
 WORKDIR /var/www/html
 
-# Copia archivos y instala dependencias de PHP
+# 5. Copia los archivos y instala dependencias de PHP
 COPY . .
 RUN composer install --no-dev --optimize-autoloader
 
-# Genera key de Laravel y limpia cache (opcional)
-RUN php artisan key:generate
+# 6. Genera APP_KEY (opcional aquí, pero puedes hacerlo en tu CI/CD)
+# RUN php artisan key:generate
 
-# Exponer el puerto que usará PHP-FPM
+# 7. Expón el puerto 9000 para PHP-FPM
 EXPOSE 9000
 
-# Arranca PHP-FPM
+# 8. Comando por defecto al iniciar el contenedor
 CMD ["php-fpm"]
