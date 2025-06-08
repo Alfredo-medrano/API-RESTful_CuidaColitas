@@ -18,9 +18,9 @@ RUN composer install --no-dev --optimize-autoloader
 
 # 6) (Opcional) Genera la APP_KEY si quieres automatizarlo aquí
 # RUN php artisan key:generate --ansi
+# Expón el puerto que Render te asigna (lleva en la variable $PORT)
+EXPOSE $PORT
 
-# 7) Expón el puerto 9000 para PHP-FPM
-EXPOSE 9000
+# Al arrancar, usa artisan serve en el puerto que Render exporta
+CMD php artisan serve --host=0.0.0.0 --port=$PORT
 
-# 8) Comando por defecto
-CMD ["php-fpm"]
