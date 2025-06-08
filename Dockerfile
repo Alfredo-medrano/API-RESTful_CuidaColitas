@@ -1,26 +1,26 @@
-# 1. Usa la imagen oficial de PHP-FPM
-FROM php:8.1-fpm
+# 1) Imagen oficial de PHP 8.2 con FPM
+FROM php:8.2-fpm
 
-# 2. Instala dependencias de sistema y extensiones para Postgres
+# 2) Instala librerías del SO y extensión PDO para PostgreSQL
 RUN apt-get update \
  && apt-get install -y git zip unzip libpq-dev \
  && docker-php-ext-install pdo pdo_pgsql
 
-# 3. Instala Composer
+# 3) Copia Composer desde su imagen oficial
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# 4. Define el directorio de trabajo
+# 4) Define el directorio de trabajo
 WORKDIR /var/www/html
 
-# 5. Copia los archivos y instala dependencias de PHP
+# 5) Copia todo el proyecto y ejecuta Composer
 COPY . .
 RUN composer install --no-dev --optimize-autoloader
 
-# 6. Genera APP_KEY (opcional aquí, pero puedes hacerlo en tu CI/CD)
-# RUN php artisan key:generate
+# 6) (Opcional) Genera la APP_KEY si quieres automatizarlo aquí
+# RUN php artisan key:generate --ansi
 
-# 7. Expón el puerto 9000 para PHP-FPM
+# 7) Expón el puerto 9000 para PHP-FPM
 EXPOSE 9000
 
-# 8. Comando por defecto al iniciar el contenedor
+# 8) Comando por defecto
 CMD ["php-fpm"]
