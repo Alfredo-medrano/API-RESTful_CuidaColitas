@@ -6,7 +6,7 @@ use App\Models\User;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Password;
-use Illuminate\Support\Facades\Hash;   // 👈 importa Hash
+use Illuminate\Support\Facades\Hash;   
 use Illuminate\Support\Str;
 
 class PasswordResetController extends Controller
@@ -57,7 +57,7 @@ class PasswordResetController extends Controller
             'password'              => 'required|confirmed|min:8',
         ]);
 
-        $user = $request->user(); // auth()->user()
+        $user = $request->user();
 
         /* Verificar contraseña actual */
         if (! Hash::check($request->current_password, $user->password)) {
